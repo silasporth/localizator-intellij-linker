@@ -1,0 +1,22 @@
+<idea-plugin>
+    <id>de.silasporth.localizator-intellij-linker</id>
+
+    <name>Localizator Linker</name>
+
+    <vendor>Silas Porth</vendor>
+
+    <description><![CDATA[
+        Links react-i18n usages to the localizator app.
+        ]]></description>
+
+    <version>0.0.1</version>
+
+    <depends>JavaScript</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <psi.referenceContributor implementation="de.silasporth.localizator.LocalizatorReferenceContributor"
+                                  language="JavaScript"/>
+        <platform.backend.documentation.psiTargetProvider
+                implementation="de.silasporth.localizator.LocalizatorDocumentationProvider"/>
+    </extensions>
+</idea-plugin>
