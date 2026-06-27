@@ -2,7 +2,8 @@
 
 # Localizator Linker Changelog
 
-## [Unreleased]
+## Unreleased
 
-## [0.0.1] - 2026-06-27
+## 0.0.1 - 2026-06-27
+
 - Initial release
