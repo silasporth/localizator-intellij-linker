@@ -6,28 +6,22 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 
 class LocalizatorReferenceProvider : PsiReferenceProvider() {
-    override fun acceptsTarget(target: PsiElement): Boolean {
-        if (target !is JSLiteralExpression || !target.isQuotedLiteral) {
-            return false
-        }
-
-        val callExpression = PsiTreeUtil.getParentOfType(target, JSCallExpression::class.java) ?: return false
-        if (callExpression.methodExpression == null) return false
-
-        val arguments = callExpression.arguments
-        return arguments.isNotEmpty() && arguments[0] == target
-    }
-
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
         if (element !is JSLiteralExpression || !element.isQuotedLiteral) return emptyArray()
 
         val key = element.stringValue ?: return emptyArray()
+        if (key.isBlank()) return emptyArray()
 
-        val callExpression = PsiTreeUtil.getParentOfType(element, JSCallExpression::class.java) ?: return emptyArray()
+        // First parent should be the argumentlist and then the function call
+        val callExpression = element.parent.parent as? JSCallExpression ?: return emptyArray()
+        if (callExpression.methodExpression == null) return emptyArray()
+
+        val arguments = callExpression.arguments
+        if (arguments.isEmpty() || arguments[0] != element) return emptyArray()
+
         val methodExpression = callExpression.methodExpression as? JSReferenceExpression ?: return emptyArray()
 
         // Find the useTranslation call where methodName comes from
